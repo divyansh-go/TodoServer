@@ -51,5 +51,12 @@ func todoid(w http.ResponseWriter, r *http.Request) {
 		data[index].Completed = f.Completed
 
 		writefile(data)
+
+	case "DELETE":
+		data := readfile()
+
+		data = append(data[:index], data[index+1:]...)
+
+		writefile(data)
 	}
 }
