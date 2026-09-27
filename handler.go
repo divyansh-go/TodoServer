@@ -3,14 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"time"
 )
 
 func todo(w http.ResponseWriter, r *http.Request) {
 
-	meth := r.Method
+	start := time.Now()
 
-	switch meth {
+	switch r.Method {
 	case "GET":
 		fmt.Fprintln(w, readfile())
 
@@ -24,13 +26,16 @@ func todo(w http.ResponseWriter, r *http.Request) {
 
 		writefile(s)
 	}
+
+	glb++
+	log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 }
 
 func todoid(w http.ResponseWriter, r *http.Request) {
 
-	meth := r.Method
+	start := time.Now()
 
-	switch meth {
+	switch r.Method {
 	case "GET":
 		for _, val := range readfile() {
 
@@ -59,4 +64,7 @@ func todoid(w http.ResponseWriter, r *http.Request) {
 
 		writefile(data)
 	}
+
+	glb++
+	log.Println(r.Method, " ", r.URL.Path, " Duration ~ ", time.Since(start))
 }
