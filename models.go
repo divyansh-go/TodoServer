@@ -1,7 +1,12 @@
 package main
 
 type Field struct {
-	ID        int
-	Title     string
-	Completed bool
+	ID        *int    `json:"ID"`
+	Title     *string `json:"Title"`
+	Completed *bool   `json:"Completed"`
+}
+
+type Temp struct {
+	Title     *string
+	Completed *bool
 }

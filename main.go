@@ -6,18 +6,13 @@ import (
 	"strconv"
 )
 
-var id, index int
-
 func main() {
 
 	http.HandleFunc("/todos", todo)
 
-	for i, val := range readfile() {
+	for _, val := range readfile() {
 
-		id = val.ID
-		index = i
-
-		str := "/todos/" + strconv.Itoa(val.ID)
+		str := "/todos/" + strconv.Itoa(*val.ID)
 		http.HandleFunc(str, todoid)
 	}
 
