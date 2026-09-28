@@ -5,9 +5,9 @@ import (
 	"os"
 )
 
-func readfile() []PtrField {
+func readfile() []Field {
 
-	var slc []PtrField
+	var slc []Field
 
 	jdata, _ := os.ReadFile("todos.json")
 	json.Unmarshal(jdata, &slc)
@@ -15,7 +15,7 @@ func readfile() []PtrField {
 	return slc
 }
 
-func writefile(slc []PtrField) {
+func writefile(slc []Field) {
 
 	jdata, _ := json.Marshal(slc)
 	os.WriteFile("todos.json", jdata, 0666)
