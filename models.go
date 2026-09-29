@@ -10,3 +10,7 @@ type Temp struct {
 	Title     *string
 	Completed *bool
 }
+
+type ErrResponse struct {
+	Error string
+}

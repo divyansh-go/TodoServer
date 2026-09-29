@@ -3,19 +3,15 @@ package main
 import (
 	"log"
 	"net/http"
-	"strconv"
 )
+
+var str = "Failed to perform the required action. Please report the error to the service provider."
 
 func main() {
 
 	http.HandleFunc("/todos", todo)
-
-	for _, val := range readfile() {
-
-		str := "/todos/" + strconv.Itoa(*val.ID)
-		http.HandleFunc(str, todoid)
-	}
+	http.HandleFunc("/todos/", todoid)
 
 	log.Println("The server started running.......")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
