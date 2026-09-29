@@ -99,7 +99,14 @@ func todoid(w http.ResponseWriter, r *http.Request) {
 
 	var index int
 
-	id, _ := strconv.Atoi(strings.TrimLeft(r.URL.Path, "todos/"))
+	id, err := strconv.Atoi(strings.TrimLeft(r.URL.Path, "todos/"))
+	if err != nil {
+
+		log.Println("Client Error: Failed to send a valid ID.")
+		errencode(w, "Requested todo does not exist. Please send a valid todo ID.(Numeric Only)")
+		log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
+		return
+	}
 
 	slc, n := readfile(w)
 	if n == 1 {
@@ -119,7 +126,7 @@ func todoid(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("Client Error: Failed to send a valid ID.")
-	errencode(w, "Requested todo does not exist. Please send a valid todo ID")
+	errencode(w, "Requested todo does not exist. Please send a valid todo ID.")
 
 	return
 
@@ -159,6 +166,7 @@ exists:
 
 		if err != nil || (t.Title == nil && t.Completed == nil) {
 
+			log.Println("Client Error: Failed to provide the proper JSON data.")
 			errencode(w, "Invalid JSON. Please follow the following format.\nExample:- {\"Title\":\"non-empty string\",\"Completed\":bool}\nPlease send atleast either of the two fields or both.")
 			break
 		}
@@ -167,6 +175,7 @@ exists:
 
 			if *t.Title == "" {
 
+				log.Println("Client Error: Failed to provide the proper JSON data.")
 				errencode(w, "Invalid Input. Title cannot be empty.")
 				break
 			}
@@ -202,7 +211,8 @@ exists:
 		writefile(data, w)
 
 	default:
-		errencode(w, "Requested todo does not exist. Please send a valid todo id")
+		log.Println("Client Error: Invalid Method request.")
+		errencode(w, "Please use a valid method.")
 
 	}
 
