@@ -18,6 +18,8 @@ func todo(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 
+		w.Header().Set("Content-Type", "application/json")
+
 		slc, n := readfile(w)
 		if n == 1 {
 
@@ -28,12 +30,21 @@ func todo(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 
 			log.Println("Failed to encode the given JSON data.")
-			errencode(w, str)
+			w.WriteHeader(http.StatusInternalServerError)
+			errencode(w, mssg)
 			break
 		}
 		fmt.Fprintln(w, string(data))
 
 	case "POST":
+
+		if r.Header.Get("Content-Type") != "application/json" {
+
+			log.Println("Client Error: Failed to send valid media-type")
+			w.WriteHeader(http.StatusUnsupportedMediaType)
+			errencode(w, "Please send a valid media-type along with appropriate Header")
+		}
+
 		var f Field
 		var t Temp
 
@@ -44,6 +55,7 @@ func todo(w http.ResponseWriter, r *http.Request) {
 		if err != nil || t.Title == nil || t.Completed == nil {
 
 			log.Println("Client error: Failed to provide the proper JSON data.")
+			w.WriteHeader(http.StatusBadRequest)
 			errencode(w, "Invalid JSON. Please follow the following format:-\n*Example:- {\"Title\":\"non-empty string\",\"Completed\":bool}\n*Ensure both values are passed.\n*ID is assigned by us.")
 			break
 		}
@@ -51,6 +63,7 @@ func todo(w http.ResponseWriter, r *http.Request) {
 		if *t.Title == "" {
 
 			log.Println("Client error: Failed to provide the proper JSON data.")
+			w.WriteHeader(http.StatusBadRequest)
 			errencode(w, "Invalid Input. Title cannot be empty.")
 
 			break
@@ -81,11 +94,17 @@ func todo(w http.ResponseWriter, r *http.Request) {
 
 			slc = append(slc, f)
 
-			writefile(slc, w)
+			num := writefile(slc, w)
+			if num == 1 {
+				break
+			}
 		}
+
+		w.WriteHeader(http.StatusCreated)
 
 	default:
 		log.Println("Client Error: Invalid Method request")
+		w.WriteHeader(http.StatusBadRequest)
 		errencode(w, "Please use a valid method")
 
 	}
@@ -103,6 +122,7 @@ func todoid(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 
 		log.Println("Client Error: Failed to send a valid ID.")
+		w.WriteHeader(http.StatusBadRequest)
 		errencode(w, "Requested todo does not exist. Please send a valid todo ID.(Numeric Only)")
 		log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 		return
@@ -126,7 +146,9 @@ func todoid(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("Client Error: Failed to send a valid ID.")
+	w.WriteHeader(http.StatusBadRequest)
 	errencode(w, "Requested todo does not exist. Please send a valid todo ID.")
+	log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 
 	return
 
@@ -134,6 +156,8 @@ exists:
 
 	switch r.Method {
 	case "GET":
+		w.Header().Set("Content-Type", "application/json")
+
 		slc1, n := readfile(w)
 		if n == 1 {
 
@@ -148,7 +172,8 @@ exists:
 				if err != nil {
 
 					log.Println("Failed to encode the given JSON data.")
-					errencode(w, str)
+					w.WriteHeader(http.StatusInternalServerError)
+					errencode(w, mssg)
 					log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 					return
 				}
@@ -158,6 +183,14 @@ exists:
 		}
 
 	case "PUT":
+		if r.Header.Get("Content-Type") != "application/json" {
+
+			log.Println("Client Error: Failed to send valid media-type")
+			w.WriteHeader(http.StatusUnsupportedMediaType)
+			errencode(w, "Please send a valid media-type along with appropriate Header")
+			break
+		}
+
 		var t Temp
 
 		decoder := json.NewDecoder(r.Body)
@@ -167,6 +200,7 @@ exists:
 		if err != nil || (t.Title == nil && t.Completed == nil) {
 
 			log.Println("Client Error: Failed to provide the proper JSON data.")
+			w.WriteHeader(http.StatusBadRequest)
 			errencode(w, "Invalid JSON. Please follow the following format.\nExample:- {\"Title\":\"non-empty string\",\"Completed\":bool}\nPlease send atleast either of the two fields or both.")
 			break
 		}
@@ -176,6 +210,7 @@ exists:
 			if *t.Title == "" {
 
 				log.Println("Client Error: Failed to provide the proper JSON data.")
+				w.WriteHeader(http.StatusBadRequest)
 				errencode(w, "Invalid Input. Title cannot be empty.")
 				break
 			}
@@ -210,8 +245,11 @@ exists:
 
 		writefile(data, w)
 
+		w.WriteHeader(http.StatusNoContent)
+
 	default:
 		log.Println("Client Error: Invalid Method request.")
+		w.WriteHeader(http.StatusBadRequest)
 		errencode(w, "Please use a valid method.")
 
 	}

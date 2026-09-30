@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-var str = "Failed to perform the required action. Please report the error to the service provider."
+const mssg = "Failed to perform the required action. Please report the error to the service provider."
 
 func main() {
 
@@ -13,5 +13,5 @@ func main() {
 	http.HandleFunc("/todos/", todoid)
 
 	log.Println("The server started running.......")
-	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+	http.ListenAndServe("localhost:8080", nil)
 }
