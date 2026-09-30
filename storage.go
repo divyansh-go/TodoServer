@@ -66,7 +66,6 @@ func errencode(x http.ResponseWriter, str string) {
 	if err != nil {
 
 		log.Println("Failed to encode the provided JSON data.")
-		x.Header().Set("Content-Type", "plain/text")
 		fmt.Fprintln(x, str)
 	}
 }

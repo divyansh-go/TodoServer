@@ -43,6 +43,7 @@ func todo(w http.ResponseWriter, r *http.Request) {
 			log.Println("Client Error: Failed to send valid media-type")
 			w.WriteHeader(http.StatusUnsupportedMediaType)
 			errencode(w, "Please send a valid media-type along with appropriate Header")
+			break
 		}
 
 		var f Field
@@ -146,7 +147,7 @@ func todoid(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("Client Error: Failed to send a valid ID.")
-	w.WriteHeader(http.StatusBadRequest)
+	w.WriteHeader(http.StatusNotFound)
 	errencode(w, "Requested todo does not exist. Please send a valid todo ID.")
 	log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 
@@ -255,4 +256,9 @@ exists:
 	}
 
 	log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
+}
+
+func welcome(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Fprintf(w, "Welcome to to Todo Server!!")
 }
