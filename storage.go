@@ -15,19 +15,15 @@ func readfile(x http.ResponseWriter) ([]Field, int) {
 	if err1 != nil {
 
 		log.Println("Failed to read the file.")
-		errencode(x, mssg)
+		errencode(x, http.StatusInternalServerError, mssg)
+		return slc, 1
 	}
 
 	err2 := json.Unmarshal(jdata, &slc)
 	if err2 != nil {
 
 		log.Println("Failed to parse the JSON-encoded data.")
-		errencode(x, mssg)
-	}
-
-	if err1 != nil || err2 != nil {
-
-		x.WriteHeader(http.StatusInternalServerError)
+		errencode(x, http.StatusInternalServerError, mssg)
 		return slc, 1
 	}
 
@@ -40,27 +36,25 @@ func writefile(slc []Field, x http.ResponseWriter) int {
 	if err1 != nil {
 
 		log.Println("Failed to encode the given data.")
-		errencode(x, mssg)
+		errencode(x, http.StatusInternalServerError, mssg)
+		return 1
 	}
 
 	err2 := os.WriteFile("todos.json", jdata, 0666)
 	if err2 != nil {
 
 		log.Println("Failed to write the data to the file.")
-		errencode(x, mssg)
-	}
-
-	if err1 != nil || err2 != nil {
-
-		x.WriteHeader(http.StatusInternalServerError)
+		errencode(x, http.StatusInternalServerError, mssg)
 		return 1
 	}
+
 	return 0
 }
 
-func errencode(x http.ResponseWriter, str string) {
+func errencode(x http.ResponseWriter, status int, str string) {
 
 	x.Header().Set("Content-Type", "application/json")
+	x.WriteHeader(status)
 
 	err := json.NewEncoder(x).Encode(ErrResponse{Error: str})
 	if err != nil {

@@ -12,5 +12,5 @@ type Temp struct {
 }
 
 type ErrResponse struct {
-	Error string
+	Error string `json:"error"`
 }

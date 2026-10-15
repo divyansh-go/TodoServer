@@ -11,6 +11,7 @@ func main() {
 
 	http.HandleFunc("/todos", todo)
 	http.HandleFunc("/todos/", todoid)
+	http.HandleFunc("/", welcome)
 
 	log.Println("The server started running.......")
 	http.ListenAndServe("localhost:8080", nil)
