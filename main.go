@@ -9,10 +9,12 @@ const mssg = "Failed to perform the required action. Please report the error to 
 
 func main() {
 
-	http.HandleFunc("/todos", todo)
-	http.HandleFunc("/todos/", todoid)
-	http.HandleFunc("/", welcome)
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/todos", todo)
+	mux.HandleFunc("/todos/", todoid)
+	mux.HandleFunc("/", welcome)
 
 	log.Println("The server started running.......")
-	http.ListenAndServe("localhost:8080", nil)
+	http.ListenAndServe("localhost:8080", mux)
 }

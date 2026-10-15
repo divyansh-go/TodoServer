@@ -252,5 +252,5 @@ exists:
 
 func welcome(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Fprintf(w, "Welcome to to Todo Server!!")
+	fmt.Fprintf(w, "Welcome to to Todo Server!!\n")
 }
