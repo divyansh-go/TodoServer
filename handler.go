@@ -8,12 +8,9 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func todo(w http.ResponseWriter, r *http.Request) {
-
-	start := time.Now()
 
 	switch r.Method {
 	case "GET":
@@ -105,12 +102,9 @@ func todo(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 }
 
 func todoid(w http.ResponseWriter, r *http.Request) {
-
-	start := time.Now()
 
 	var index int
 
@@ -119,14 +113,12 @@ func todoid(w http.ResponseWriter, r *http.Request) {
 
 		log.Println("Client Error: Failed to send a valid ID.")
 		errencode(w, http.StatusBadRequest, "Requested todo does not exist. Please send a valid todo ID.(Numeric Only)")
-		log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 		return
 	}
 
 	slc, n := readfile(w)
 	if n == 1 {
 
-		log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 		return
 	}
 
@@ -142,7 +134,6 @@ func todoid(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Client Error: Failed to send a valid ID.")
 	errencode(w, http.StatusNotFound, "Requested todo does not exist. Please send a valid todo ID.")
-	log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 
 	return
 
@@ -167,7 +158,6 @@ exists:
 
 					log.Println("Failed to encode the given JSON data.")
 					errencode(w, http.StatusInternalServerError, mssg)
-					log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 					return
 				}
 
@@ -247,7 +237,6 @@ exists:
 
 	}
 
-	log.Println(r.Method, r.URL.Path, " Duration ~ ", time.Since(start))
 }
 
 func welcome(w http.ResponseWriter, r *http.Request) {

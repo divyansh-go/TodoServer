@@ -15,6 +15,8 @@ func main() {
 	mux.HandleFunc("/todos/", todoid)
 	mux.HandleFunc("/", welcome)
 
+	server := loggingMiddleware(mux)
+
 	log.Println("The server started running.......")
-	http.ListenAndServe("localhost:8080", mux)
+	http.ListenAndServe("localhost:8080", server)
 }
